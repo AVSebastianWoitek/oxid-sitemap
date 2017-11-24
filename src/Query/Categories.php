@@ -16,15 +16,16 @@ class Categories extends AbstractQuery
                         oxlongdesc,
                         oxstdurl,
                         oxseourl
-                    FROM oxcategories
+                    FROM oxcategories AS categories
                     JOIN
-                      oxseo
+                      oxseo AS seo 
                     ON
-                      (oxseo.OXOBJECTID = oxcategories.OXID)
+                      (seo.OXOBJECTID = categories.OXID)
                     WHERE
-                        oxactive = 1 AND
-                        oxhidden = 0 %s
-                    ORDER by oxtitle ASC";
+                        categories.oxactive = 1 AND
+                        seo.oxstdurl NOT LIKE %s AND
+                        categories.oxhidden = 0 %s 
+                    ORDER by categories.oxtitle ASC";
 
 
     /**
@@ -32,7 +33,7 @@ class Categories extends AbstractQuery
      */
     public function getSql()
     {
-        $this->sql = sprintf($this->sql, $this->config->getLangQuery());
+        $this->sql = sprintf($this->sql, "('%pgNr=%')", $this->config->getLangQuery());
         return $this->sql;
     }
 
